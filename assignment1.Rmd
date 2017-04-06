@@ -1,0 +1,159 @@
+---
+title: "CS&SS/Stat 564: Assignment 1"
+author: "Jeffrey Arnold"
+date: "4/6/2017"
+bibliography: "local.bib"
+output:
+  html_document:
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Fork this repository, edit this file with your solutions, and turn in this assignment via pull request.
+
+For help with Markdown and R markdown
+
+- [RStudio R markdown site](http://rmarkdown.rstudio.com/index.html)
+- [R Markdown Cheatsheet](https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+- [R Markdown Reference Guide](https://www.rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf)
+- [Math in R Markdown](http://www.stat.cmu.edu/~cshalizi/rmarkdown/#math-in-r-markdown)
+
+This problem set will require loading the following packages:
+```{r message=FALSE}
+# library()
+library("rethinking")
+library("boot")
+```
+
+You will (probably, but not necessarily) need **boot** for bootstrapping.
+
+# Statistical Rethinking, Ch. 2
+
+Complete these problems from 
+
+## 2M1
+
+## 2M2
+
+## 2H1
+
+## 2H2
+
+## 2H3
+
+## 2H4
+
+# Statistical Rethinking, Ch 3.
+
+## 3H1
+
+## 3H2
+
+## 3H3
+
+## 3H4
+
+## 3H5
+
+
+# The German Tank Problem
+
+The "[German Tank Problem](https://en.wikipedia.org/wiki/German_tank_problem)" is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed. 
+The general problem is to estimate the size of a population given a sequentially numbered sampled: given that you observe a sample with sequential numbers $\{12, 17, 33, 35, 50\}$, how large is the population from which that sample was drawn? [^fn1]
+More recently, @SpirlingGill2016a, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.
+
+*Can you think of, or have you come across another problem, in your own resaearch interests in which this method could be used?*
+
+[^fn1]: In that example, it was 100, and the sample was generated via `sort(sample(1:100, 5))`.  The other important assumption is that within the population, all obervations are sampled with equal probability and without replacement.
+
+We want to estimate the size of a finite population ($N$), given sequentially numbered sample of size $n \leq N$ sampled with equal and independent probabilities and without replacement from that population.
+Let $X$ be the maximum value of that sample, $X = \max(X_1, \dots, X_n)$.
+What we want to estimate is $N$ given that we have observed a maximum value of $X = x$.
+By Bayes rule, 
+$$
+\Pr(N | x) = \frac{\Pr(x | N) \Pr(N)}{\Pr(x)}, \text{for $x \leq N < \infty$}
+$$
+where $Pr(x)$ is the normalizing constant, $\Pr(N)$ the prior distribution of the total number of cables, adn $\Pr(m|N)$ is the probablity that the maximum numbered cable in the sample is $m$ given that $N$ cables were sent.
+
+The likelihood, the probability of observing a sample maximum of $x = X$ given $n$, is
+$$
+\Pr(x | N) = \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} ,
+$$
+and a log likelihood of 
+$$
+\log \Pr(x | N) = \log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right].
+$$
+Note that you should always calculate likelihoods on the log-scale given that these probabilities can get too small to represent with floating point numbers.[^floatingpoint]
+Binomial coefficient and factorials should also always be calculated on the log scale, which is why R provides the function $lchoose$, since binomial coefficients quickly become larger than floating point accuracy
+The following R function calculates that log-likelihood,
+```{r}
+maxint_loglik <- function(x, n, N) {
+  lchoose(x - 1, n - 1) - lchoose(N - 1, n)
+}
+```
+
+[^floatingpoint]: If you are not familiar with the term "floating point", see @Computerphile2014a, @Burns2011a[ch. 1], and @Goldberg1991a.
+
+```{r}
+set.seed(35489)
+n <- 10
+N <- 100
+smpl <- sample.int(N, size = n)
+smpl_max <- max(smpl)
+```
+
+## Frequentist Estimators
+
+1. Show that the maximum likelihood estimator of the population size $\hat{N}_{\text{MLE}}$ is $x$ (the maximum integer in the sample). This does not need to be a formal proof.
+    You can show this by calculating the likelihood over a reasonable range of values and finding the maximum.
+2. @Goodman1954a provides a minimum variance unbiased estimator of $N$,
+    $$
+    \hat{N}_{\text{Goodman}} = \frac{n + 1}{n} x - 1 .
+    $$
+    What is the minimum unbiased variance estimator for this sample?
+3. Calculate 95% confidence intervals for both of these estimators using a simple bootstrap.
+
+### Bayesian Posterior: Proper Uniform Prior and Grid Estimation
+
+We now turn to Bayesian estimation of the population maximum.[^bayespop]
+The first prior we will consider is a proper uniform uniform distribution with a minimum of 0 and a maximum of $N > K$,
+$$
+N \sim U(0, K),
+$$
+which has the probability mass function of 
+$$
+p(N) = 
+\begin{cases}
+\frac{1}{K} & \text{if $N \in \{0, K\}$} \\
+N & \text{otherwise}
+\end{cases}
+$$
+
+In this example use $K = 400$.
+```{r}
+K <- 400
+```
+
+In R, you can calculate the probability mass function of the uniform distribution with the function with `dunif`.
+Even though the pmf calculation for this function is trivial, using it will make your code more readable because it will more clearly expresses your
+intent than `1 / K`.[^r4ds]
+
+[^r4ds]: See [R for Data Science](http://r4ds.had.co.nz/functions.html#introduction-12) for a discussion of how code is for humans to read.
+
+We will calculate the Bayesian posterior distribution by grid estimation as described in *Rethinking Statistics*.
+
+  1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 10,000$.
+  2. Compute the prior probablity at each value
+  3. Compute the likelihood at each value
+  4. Compute the unstandardized and standardized likelihood at each value
+
+2. On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.
+3. Calculate the maximum a posterior, mean, and median estimators.
+4. Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.
+
+[^bayespop]: See @Hoehle2006a for various Bayesian estimators of this problem.
+
+## References
