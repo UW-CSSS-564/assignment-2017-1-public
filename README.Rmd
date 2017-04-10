@@ -81,10 +81,20 @@ where $Pr(x)$ is the normalizing constant, $\Pr(N)$ the prior distribution of th
 The likelihood, the probability of observing a sample maximum of $x = X$ given $n$, is
 $$
 \Pr(x | N) = \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} ,
+\Pr(x | N) = 
+\begin{cases}
+\frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
+0 & \text{otherwise}
+\end{cases},
 $$
 and a log likelihood of 
 $$
 \log \Pr(x | N) = \log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right].
+\log \Pr(x | N) =
+\begin{cases}
+\log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right] & \text{if $n \eq x \leq N$,} \\
+-\infty & \text{otherwise} 
+\end{cases} .
 $$
 Note that you should always calculate likelihoods on the log-scale given that these probabilities can get too small to represent with floating point numbers.[^floatingpoint]
 Binomial coefficient and factorials should also always be calculated on the log scale, which is why R provides the function $lchoose$, since binomial coefficients quickly become larger than floating point accuracy
@@ -92,6 +102,7 @@ The following R function calculates that log-likelihood,
 ```{r}
 maxint_loglik <- function(x, n, N) {
   lchoose(x - 1, n - 1) - lchoose(N - 1, n)
+  ifelse(n <= x & x <= N, lchoose(x - 1, n - 1) - lchoose(N - 1, n), -Inf)
 }
 ```
 
