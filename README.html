@@ -118,7 +118,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">CS&amp;SS/Stat 564: Assignment 1</h1>
 <h4 class="author"><em>Jeffrey Arnold</em></h4>
-<h4 class="date"><em>4/6/2017</em></h4>
+<h4 class="date"><em>4/10/2017</em></h4>
 
 </div>
 
@@ -178,7 +178,7 @@ library(&quot;boot&quot;)</code></pre>
 </div>
 <div id="the-german-tank-problem" class="section level1">
 <h1><span class="header-section-number">3</span> The German Tank Problem</h1>
-<p>The “<a href="https://en.wikipedia.org/wiki/German_tank_problem">German Tank Problem</a>” is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed. The general problem is to estimate the size of a population given a sequentially numbered sampled: given that you observe a sample with sequential numbers <span class="math inline">\(\{12, 17, 33, 35, 50\}\)</span>, how large is the population from which that sample was drawn?<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> More recently, <span class="citation">(<span class="citeproc-not-found" data-reference-id="SpirlingGill2016a"><strong>???</strong></span>)</span>, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.</p>
+<p>The “<a href="https://en.wikipedia.org/wiki/German_tank_problem">German Tank Problem</a>” is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed. The general problem is to estimate the size of a population given a sequentially numbered sampled: given that you observe a sample with sequential numbers <span class="math inline">\(\{12, 17, 33, 35, 50\}\)</span>, how large is the population from which that sample was drawn?<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> More recently, <span class="citation">Gill and Spirling (2015)</span>, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.</p>
 <p><em>Can you think of, or have you come across another problem, in your own resaearch interests in which this method could be used?</em></p>
 <p>We want to estimate the size of a finite population (<span class="math inline">\(N\)</span>), given sequentially numbered sample of size <span class="math inline">\(n \leq N\)</span> sampled with equal and independent probabilities and without replacement from that population. Let <span class="math inline">\(X\)</span> be the maximum value of that sample, <span class="math inline">\(X = \max(X_1, \dots, X_n)\)</span>. What we want to estimate is <span class="math inline">\(N\)</span> given that we have observed a maximum value of <span class="math inline">\(X = x\)</span>. By Bayes rule, <span class="math display">\[
 \Pr(N | x) = \frac{\Pr(x | N) \Pr(N)}{\Pr(x)}, \text{for $x \leq N &lt; \infty$}
@@ -284,6 +284,9 @@ N &amp; \text{otherwise}
 </div>
 <div id="ref-Computerphile2014a">
 <p>Computerphile. 2014. “Floating Point Numbers - Computerphile: Floating Point Numbers - Computerphile.” January 22. <a href="https://www.youtube.com/watch?v=PZRI1IfStY0" class="uri">https://www.youtube.com/watch?v=PZRI1IfStY0</a>.</p>
+</div>
+<div id="ref-GillSpirling2015a">
+<p>Gill, Michael, and Arthur Spirling. 2015. “Estimating the Severity of the Wikileaks U.S. Diplomatic Cables Disclosure.” <em>Political Analysis</em> 23 (02). Cambridge University Press (CUP): 299–305. doi:<a href="https://doi.org/10.1093/pan/mpv005">10.1093/pan/mpv005</a>.</p>
 </div>
 <div id="ref-Goldberg1991a">
 <p>Goldberg, David. 1991. “What Every Computer Scientist Should Know About Floating-Point Arithmetic.” <em>ACM Computing Surveys</em>. doi:<a href="https://doi.org/10.1145/103162.103163">10.1145/103162.103163</a>.</p>

@@ -3,9 +3,9 @@ title: 'CS&SS/Stat 564: Assignment 1'
 author: "Jeffrey Arnold"
 date: "4/10/2017"
 output:
-  pdf_document:
-    number_sections: yes  
   html_document:
+    number_sections: yes
+  pdf_document:
     number_sections: yes
 bibliography: local.bib
 ---
@@ -65,7 +65,7 @@ Complete these problems from
 
 The "[German Tank Problem](https://en.wikipedia.org/wiki/German_tank_problem)" is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed. 
 The general problem is to estimate the size of a population given a sequentially numbered sampled: given that you observe a sample with sequential numbers $\{12, 17, 33, 35, 50\}$, how large is the population from which that sample was drawn? [^fn1]
-More recently, @SpirlingGill2016a, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.
+More recently, @GillSpirling2015a, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.
 
 *Can you think of, or have you come across another problem, in your own resaearch interests in which this method could be used?*
 
