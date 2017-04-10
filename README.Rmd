@@ -1,11 +1,13 @@
 ---
-title: "CS&SS/Stat 564: Assignment 1"
+title: 'CS&SS/Stat 564: Assignment 1'
 author: "Jeffrey Arnold"
-date: "4/6/2017"
-bibliography: "local.bib"
+date: "4/10/2017"
 output:
+  pdf_document:
+    number_sections: yes  
   html_document:
-    number_sections: true
+    number_sections: yes
+bibliography: local.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -90,7 +92,7 @@ and a log likelihood of
 $$
 \log \Pr(x | N) =
 \begin{cases}
-\log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right] & \text{if $n \eq x \leq N$,} \\
+\log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right] & \text{if $n \leq x \leq N$,} \\
 -\infty & \text{otherwise} 
 \end{cases} .
 $$
@@ -158,6 +160,24 @@ estimator <- function(x) {
 ### Bayesian Posterior: Proper Uniform Prior and Grid Estimation
 
 We now turn to Bayesian estimation of the population maximum.[^bayespop]
+
+The posterior probability of the the population maximum given the sample is $p(N | x, n)$ is
+$$
+p(N | x) = \frac{p(x | N) p(N)}{p(x)}
+$$
+The likelihood $p(x | N)$ is the same as the MLE estimator,
+$$
+\Pr(x | N) = 
+\begin{cases}
+\frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
+0 & \text{otherwise}
+\end{cases},
+$$
+The marginal probabiliry of the data, is the sum of $p(x |N) p(N)$ for all values of $N$ which have non-zero probability in the prior,
+$$
+p(x) = \sum_{m \in \{N: p(N) \neq 0\}} p(x | m) p(x) .
+$$
+
 The first prior we will consider is a proper uniform uniform distribution with a minimum of 0 and a maximum of $N > K$,
 $$
 N \sim U(0, K),
@@ -184,14 +204,13 @@ intent than `1 / K`.[^r4ds]
 
 We will calculate the Bayesian posterior distribution by grid estimation as described in *Rethinking Statistics*.
 
-  1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 400$.
-  2. Compute the prior probablity at each value
-  3. Compute the likelihood at each value
-  4. Compute the unstandardized and standardized likelihood at each value
-
-2. On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.
-3. Calculate the maximum a posterior, mean, and median estimators.
-4. Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.
+1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 400$.
+2. Compute the prior probablity at each value
+3. Compute the likelihood at each value
+4. Compute the unstandardized and standardized likelihood at each value
+5. On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.
+6. Calculate the maximum a posterior, mean, and median estimators.
+7. Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.
 
 [^bayespop]: See @Hoehle2006a for various Bayesian estimators of this problem.
 
