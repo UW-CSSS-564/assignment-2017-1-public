@@ -182,6 +182,7 @@ intent than `1 / K`.[^r4ds]
 
 We will calculate the Bayesian posterior distribution by grid estimation as described in *Rethinking Statistics*.
 
+  1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 400$.
   2. Compute the prior probablity at each value
   3. Compute the likelihood at each value
   4. Compute the unstandardized and standardized likelihood at each value
