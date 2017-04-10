@@ -105,11 +105,13 @@ maxint_loglik <- function(x, n, N) {
 
 [^floatingpoint]: If you are not familiar with the term "floating point", see @Computerphile2014a, @Burns2011a[ch. 1], and @Goldberg1991a.
 
+For these examples use the following generated data set:
 ```{r}
-set.seed(35489)
-n <- 10
-N <- 100
-smpl <- sample.int(N, size = n)
+# set.seed(35489)
+# n <- 10
+# N <- 100
+# smpl <- sample.int(N, size = n)
+smpl <- c(6, 17, 49, 75, 46, 71, 26, 66, 28, 74)
 smpl_max <- max(smpl)
 ```
 
