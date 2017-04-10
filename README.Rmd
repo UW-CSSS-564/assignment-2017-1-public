@@ -80,7 +80,6 @@ where $Pr(x)$ is the normalizing constant, $\Pr(N)$ the prior distribution of th
 
 The likelihood, the probability of observing a sample maximum of $x = X$ given $n$, is
 $$
-\Pr(x | N) = \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} ,
 \Pr(x | N) = 
 \begin{cases}
 \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
@@ -89,7 +88,6 @@ $$
 $$
 and a log likelihood of 
 $$
-\log \Pr(x | N) = \log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right].
 \log \Pr(x | N) =
 \begin{cases}
 \log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right] & \text{if $n \eq x \leq N$,} \\
@@ -101,7 +99,6 @@ Binomial coefficient and factorials should also always be calculated on the log 
 The following R function calculates that log-likelihood,
 ```{r}
 maxint_loglik <- function(x, n, N) {
-  lchoose(x - 1, n - 1) - lchoose(N - 1, n)
   ifelse(n <= x & x <= N, lchoose(x - 1, n - 1) - lchoose(N - 1, n), -Inf)
 }
 ```
@@ -125,7 +122,36 @@ smpl_max <- max(smpl)
     \hat{N}_{\text{Goodman}} = \frac{n + 1}{n} x - 1 .
     $$
     What is the minimum unbiased variance estimator for this sample?
-3. Calculate 95% confidence intervals for both of these estimators using a simple bootstrap.
+3. Calculate 95% confidence intervals for both of these estimators using a simple bootstrap. **Do the confidence intervals make sense?**
+
+
+Example of bootstrapping confidence intervals for the maximum likelihood estimator.
+```{r}
+# Number of simulations
+nsims <- 2000
+# For clarity write a function for the estimator
+estimator <- function(x) max(x)
+# initialize a vector to save results of the bootstrapping
+results <- vector("numeric", nsims)
+# repeat `nsims` times:
+for (i in seq_len(nsims)) {
+  # resample the sample
+  newsmpl <- sample(smpl, size = length(smpl), replace = TRUE)
+  # calculate estimate and save to the 
+  results[i] <- estimator(newsmpl)
+}
+# A 95% confidence interval is
+quantile(results, c(0.025, 0.975))
+```
+
+Now, you can edit the code above and replace `estimator` with a with the Goodman estimator:
+```{r}
+estimator <- function(x) {
+  n <- length(x)
+   (n + 1) / n * (max(x) - 1)
+}
+```
+
 
 ### Bayesian Posterior: Proper Uniform Prior and Grid Estimation
 
@@ -156,7 +182,6 @@ intent than `1 / K`.[^r4ds]
 
 We will calculate the Bayesian posterior distribution by grid estimation as described in *Rethinking Statistics*.
 
-  1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 10,000$.
   2. Compute the prior probablity at each value
   3. Compute the likelihood at each value
   4. Compute the unstandardized and standardized likelihood at each value
