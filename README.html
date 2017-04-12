@@ -233,10 +233,10 @@ for (i in seq_len(nsims)) {
 quantile(results, c(0.025, 0.975))</code></pre>
 <pre><code>##  2.5% 97.5% 
 ##    66    75</code></pre>
-<p>Now, you can edit the code above and replace <code>estimator</code> with a with the Goodman estimator:</p>
+<p>Now, you can edit the code above and replace <code>estimator</code> with the Goodman estimator:</p>
 <pre class="r"><code>estimator &lt;- function(x) {
   n &lt;- length(x)
-   (n + 1) / n * (max(x) - 1)
+  ((n + 1) / n) * max(x) - 1
 }</code></pre>
 <div id="bayesian-posterior-proper-uniform-prior-and-grid-estimation" class="section level3">
 <h3><span class="header-section-number">3.1.1</span> Bayesian Posterior: Proper Uniform Prior and Grid Estimation</h3>

@@ -148,11 +148,11 @@ for (i in seq_len(nsims)) {
 quantile(results, c(0.025, 0.975))
 ```
 
-Now, you can edit the code above and replace `estimator` with a with the Goodman estimator:
+Now, you can edit the code above and replace `estimator` with the Goodman estimator:
 ```{r}
 estimator <- function(x) {
   n <- length(x)
-   (n + 1) / n * (max(x) - 1)
+  ((n + 1) / n) * max(x) - 1
 }
 ```
 
