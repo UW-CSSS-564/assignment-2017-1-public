@@ -232,7 +232,7 @@ for (i in seq_len(nsims)) {
 # A 95% confidence interval is
 quantile(results, c(0.025, 0.975))</code></pre>
 <pre><code>##  2.5% 97.5% 
-##    66    75</code></pre>
+##    71    75</code></pre>
 <p>Now, you can edit the code above and replace <code>estimator</code> with the Goodman estimator:</p>
 <pre class="r"><code>estimator &lt;- function(x) {
   n &lt;- length(x)
@@ -269,7 +269,7 @@ N &amp; \text{otherwise}
 <li>Suppose that the prior probability for <span class="math inline">\(N\)</span> is distributed uniform between <span class="math inline">\(0\)</span> and some maximum value <span class="math inline">\(K \geq N\)</span>. <span class="math inline">\(K = 400\)</span>.</li>
 <li>Compute the prior probablity at each value</li>
 <li>Compute the likelihood at each value</li>
-<li>Compute the unstandardized and standardized likelihood at each value</li>
+<li>Compute the unstandardized and standardized posterior at each value</li>
 <li>On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.</li>
 <li>Calculate the maximum a posterior, mean, and median estimators.</li>
 <li>Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.</li>

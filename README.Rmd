@@ -207,7 +207,7 @@ We will calculate the Bayesian posterior distribution by grid estimation as desc
 1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 400$.
 2. Compute the prior probablity at each value
 3. Compute the likelihood at each value
-4. Compute the unstandardized and standardized likelihood at each value
+4. Compute the unstandardized and standardized posterior at each value
 5. On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.
 6. Calculate the maximum a posterior, mean, and median estimators.
 7. Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.
