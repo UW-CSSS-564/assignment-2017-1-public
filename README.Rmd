@@ -1,11 +1,13 @@
 ---
-title: "CS&SS/Stat 564: Assignment 1"
+title: 'CS&SS/Stat 564: Assignment 1'
 author: "Jeffrey Arnold"
-date: "4/6/2017"
-bibliography: "local.bib"
+date: "4/10/2017"
 output:
   html_document:
-    number_sections: true
+    number_sections: yes
+  pdf_document:
+    number_sections: yes
+bibliography: local.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -63,7 +65,7 @@ Complete these problems from
 
 The "[German Tank Problem](https://en.wikipedia.org/wiki/German_tank_problem)" is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed. 
 The general problem is to estimate the size of a population given a sequentially numbered sampled: given that you observe a sample with sequential numbers $\{12, 17, 33, 35, 50\}$, how large is the population from which that sample was drawn? [^fn1]
-More recently, @SpirlingGill2016a, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.
+More recently, @GillSpirling2015a, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.
 
 *Can you think of, or have you come across another problem, in your own resaearch interests in which this method could be used?*
 
@@ -80,28 +82,38 @@ where $Pr(x)$ is the normalizing constant, $\Pr(N)$ the prior distribution of th
 
 The likelihood, the probability of observing a sample maximum of $x = X$ given $n$, is
 $$
-\Pr(x | N) = \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} ,
+\Pr(x | N) = 
+\begin{cases}
+\frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
+0 & \text{otherwise}
+\end{cases},
 $$
 and a log likelihood of 
 $$
-\log \Pr(x | N) = \log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right].
+\log \Pr(x | N) =
+\begin{cases}
+\log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right] & \text{if $n \leq x \leq N$,} \\
+-\infty & \text{otherwise} 
+\end{cases} .
 $$
 Note that you should always calculate likelihoods on the log-scale given that these probabilities can get too small to represent with floating point numbers.[^floatingpoint]
 Binomial coefficient and factorials should also always be calculated on the log scale, which is why R provides the function $lchoose$, since binomial coefficients quickly become larger than floating point accuracy
 The following R function calculates that log-likelihood,
 ```{r}
 maxint_loglik <- function(x, n, N) {
-  lchoose(x - 1, n - 1) - lchoose(N - 1, n)
+  ifelse(n <= x & x <= N, lchoose(x - 1, n - 1) - lchoose(N - 1, n), -Inf)
 }
 ```
 
 [^floatingpoint]: If you are not familiar with the term "floating point", see @Computerphile2014a, @Burns2011a[ch. 1], and @Goldberg1991a.
 
+For these examples use the following generated data set:
 ```{r}
-set.seed(35489)
-n <- 10
-N <- 100
-smpl <- sample.int(N, size = n)
+# set.seed(35489)
+# n <- 10
+# N <- 100
+# smpl <- sample.int(N, size = n)
+smpl <- c(6, 17, 49, 75, 46, 71, 26, 66, 28, 74)
 smpl_max <- max(smpl)
 ```
 
@@ -114,11 +126,58 @@ smpl_max <- max(smpl)
     \hat{N}_{\text{Goodman}} = \frac{n + 1}{n} x - 1 .
     $$
     What is the minimum unbiased variance estimator for this sample?
-3. Calculate 95% confidence intervals for both of these estimators using a simple bootstrap.
+3. Calculate 95% confidence intervals for both of these estimators using a simple bootstrap. **Do the confidence intervals make sense?**
+
+
+Example of bootstrapping confidence intervals for the maximum likelihood estimator.
+```{r}
+# Number of simulations
+nsims <- 2000
+# For clarity write a function for the estimator
+estimator <- function(x) max(x)
+# initialize a vector to save results of the bootstrapping
+results <- vector("numeric", nsims)
+# repeat `nsims` times:
+for (i in seq_len(nsims)) {
+  # resample the sample
+  newsmpl <- sample(smpl, size = length(smpl), replace = TRUE)
+  # calculate estimate and save to the 
+  results[i] <- estimator(newsmpl)
+}
+# A 95% confidence interval is
+quantile(results, c(0.025, 0.975))
+```
+
+Now, you can edit the code above and replace `estimator` with the Goodman estimator:
+```{r}
+estimator <- function(x) {
+  n <- length(x)
+  ((n + 1) / n) * max(x) - 1
+}
+```
+
 
 ### Bayesian Posterior: Proper Uniform Prior and Grid Estimation
 
 We now turn to Bayesian estimation of the population maximum.[^bayespop]
+
+The posterior probability of the the population maximum given the sample is $p(N | x, n)$ is
+$$
+p(N | x) = \frac{p(x | N) p(N)}{p(x)}
+$$
+The likelihood $p(x | N)$ is the same as the MLE estimator,
+$$
+\Pr(x | N) = 
+\begin{cases}
+\frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
+0 & \text{otherwise}
+\end{cases},
+$$
+The marginal probabiliry of the data, is the sum of $p(x |N) p(N)$ for all values of $N$ which have non-zero probability in the prior,
+$$
+p(x) = \sum_{m \in \{N: p(N) \neq 0\}} p(x | m) p(x) .
+$$
+
 The first prior we will consider is a proper uniform uniform distribution with a minimum of 0 and a maximum of $N > K$,
 $$
 N \sim U(0, K),
@@ -145,14 +204,13 @@ intent than `1 / K`.[^r4ds]
 
 We will calculate the Bayesian posterior distribution by grid estimation as described in *Rethinking Statistics*.
 
-  1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 10,000$.
-  2. Compute the prior probablity at each value
-  3. Compute the likelihood at each value
-  4. Compute the unstandardized and standardized likelihood at each value
-
-2. On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.
-3. Calculate the maximum a posterior, mean, and median estimators.
-4. Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.
+1. Suppose that the prior probability for $N$ is distributed uniform between $0$ and some maximum value $K \geq N$.  $K = 400$.
+2. Compute the prior probablity at each value
+3. Compute the likelihood at each value
+4. Compute the unstandardized and standardized posterior at each value
+5. On the same plot, plot the probability mass functions of the likelihood, prior, and posterior distributions.
+6. Calculate the maximum a posterior, mean, and median estimators.
+7. Calculate the 95% central credible interval. How does it differ from the frequentist confidence intervals, both in its values and in interpretation.
 
 [^bayespop]: See @Hoehle2006a for various Bayesian estimators of this problem.
 
