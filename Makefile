@@ -1,16 +1,13 @@
-rmdfile = README.Rmd
-mdfile = $(rmdfile:%.Rmd=%.md)
-pdffile = $(rmdfile:%.Rmd=%.pdf)
-htmlfile = $(rmdfile:%.Rmd=%.html)
+RMD_FILE = index.Rmd
+PDF_FILE = assignment-2017-1.pdf
+HTML_FILE = ${RMD_FILE:%.Rmd=%.html}
 
-.PHONY: all
-all: $(htmlfile) $(pdffile) $(mdfile)
+BIBFILE = local.bib
 
-$(pdffile): $(rmdfile)
-	Rscript -e 'rmarkdown::render("$^",output_format="pdf_document")'
+all: $(PDF_FILE) $(HTML_FILE) $(MD_FILE)
 
-$(htmlfile): $(rmdfile)
-	Rscript -e 'rmarkdown::render("$^",output_format="html_document")'
+$(PDF_FILE): $(RMD_FILE) $(wildcard includes/*.tex) $(BIBFILE)
+	Rscript -e 'rmarkdown::render("$<",output_format="pdf_document",output_file="$@")'
 
-$(mdfile): $(rmdfile)
-	Rscript -e 'rmarkdown::render("$^",output_format="md_document")'
+$(HTML_FILE): $(RMD_FILE) $(wildcard includes/*.html) $(BIBFILE)
+	Rscript -e 'rmarkdown::render("$<",output_format="html_document")'

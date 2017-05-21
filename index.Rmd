@@ -1,6 +1,6 @@
 ---
-title: 'CS&SS/Stat 564: Assignment 1'
-author: "Jeffrey Arnold"
+title: 'CS&SS/STAT 564: Assignment 1'
+author: "Jeffrey B. Arnold"
 date: "4/10/2017"
 output:
   html_document:
@@ -10,11 +10,15 @@ output:
 bibliography: local.bib
 ---
 
+# Instructions {-}
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Fork this repository, edit this file with your solutions, and turn in this assignment via pull request.
+1. Fork https://github.com/UW-CSSS-564/assignment-2017-1.
+2. Edit `README.Rmd` to add your solutions
+3. Submit the assignment via a pull request
 
 For help with Markdown and R markdown
 
@@ -34,7 +38,7 @@ You will (probably, but not necessarily) need **boot** for bootstrapping.
 
 # Statistical Rethinking, Ch. 2
 
-Complete these problems from 
+Complete these problems:
 
 ## 2M1
 
@@ -50,6 +54,8 @@ Complete these problems from
 
 # Statistical Rethinking, Ch 3.
 
+Complete these problems:
+
 ## 3H1
 
 ## 3H2
@@ -63,7 +69,7 @@ Complete these problems from
 
 # The German Tank Problem
 
-The "[German Tank Problem](https://en.wikipedia.org/wiki/German_tank_problem)" is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed. 
+The "[German Tank Problem](https://en.wikipedia.org/wiki/German_tank_problem)" is so named because it was firstly, or at least famously, used to estimate the total number of German tanks in WWII from the serial numbers of tanks they had destroyed.
 The general problem is to estimate the size of a population given a sequentially numbered sampled: given that you observe a sample with sequential numbers $\{12, 17, 33, 35, 50\}$, how large is the population from which that sample was drawn? [^fn1]
 More recently, @GillSpirling2015a, use this methodology to estimate the total number of US diplomatic cables, and the proportion leaked, from the Wikileaks dump of US diplomatic cables in 2011.
 
@@ -74,7 +80,7 @@ More recently, @GillSpirling2015a, use this methodology to estimate the total nu
 We want to estimate the size of a finite population ($N$), given sequentially numbered sample of size $n \leq N$ sampled with equal and independent probabilities and without replacement from that population.
 Let $X$ be the maximum value of that sample, $X = \max(X_1, \dots, X_n)$.
 What we want to estimate is $N$ given that we have observed a maximum value of $X = x$.
-By Bayes rule, 
+By Bayes rule,
 $$
 \Pr(N | x) = \frac{\Pr(x | N) \Pr(N)}{\Pr(x)}, \text{for $x \leq N < \infty$}
 $$
@@ -82,18 +88,18 @@ where $Pr(x)$ is the normalizing constant, $\Pr(N)$ the prior distribution of th
 
 The likelihood, the probability of observing a sample maximum of $x = X$ given $n$, is
 $$
-\Pr(x | N) = 
+\Pr(x | N) =
 \begin{cases}
 \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
 0 & \text{otherwise}
 \end{cases},
 $$
-and a log likelihood of 
+and a log likelihood of
 $$
 \log \Pr(x | N) =
 \begin{cases}
 \log\left[\binom{x - 1}{n - 1}\right] - \log\left[{\binom{N}{n}} \right] & \text{if $n \leq x \leq N$,} \\
--\infty & \text{otherwise} 
+-\infty & \text{otherwise}
 \end{cases} .
 $$
 Note that you should always calculate likelihoods on the log-scale given that these probabilities can get too small to represent with floating point numbers.[^floatingpoint]
@@ -141,7 +147,7 @@ results <- vector("numeric", nsims)
 for (i in seq_len(nsims)) {
   # resample the sample
   newsmpl <- sample(smpl, size = length(smpl), replace = TRUE)
-  # calculate estimate and save to the 
+  # calculate estimate and save to the
   results[i] <- estimator(newsmpl)
 }
 # A 95% confidence interval is
@@ -167,7 +173,7 @@ p(N | x) = \frac{p(x | N) p(N)}{p(x)}
 $$
 The likelihood $p(x | N)$ is the same as the MLE estimator,
 $$
-\Pr(x | N) = 
+\Pr(x | N) =
 \begin{cases}
 \frac{\binom{x - 1}{n - 1}}{\binom{N}{n}} & \text{if $n \leq x \leq N$} \\
 0 & \text{otherwise}
@@ -182,9 +188,9 @@ The first prior we will consider is a proper uniform uniform distribution with a
 $$
 N \sim U(0, K),
 $$
-which has the probability mass function of 
+which has the probability mass function of
 $$
-p(N) = 
+p(N) =
 \begin{cases}
 \frac{1}{K} & \text{if $N \in \{0, K\}$} \\
 N & \text{otherwise}
@@ -214,4 +220,4 @@ We will calculate the Bayesian posterior distribution by grid estimation as desc
 
 [^bayespop]: See @Hoehle2006a for various Bayesian estimators of this problem.
 
-## References
+# References {-}
